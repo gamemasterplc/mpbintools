@@ -151,7 +151,11 @@ int main(int argc, char** argv)
 		if (write_c_header == true)
 		{
 			header_slash_loc = GetLastSlashPos(argv[3]);
-			strncpy(header_name, argv[3] + header_slash_loc + 1, 256);
+			if(header_slash_loc != 0)
+			{
+				header_slash_loc++;
+			}
+			strncpy(header_name, argv[3] + header_slash_loc, 256);
 			j = 0;
 			while (header_name[j] != 0)
 			{
