@@ -92,7 +92,7 @@ int main(int argc, char** argv)
 
 	bool write_c_header = false;
 
-	if (argc >= 3)
+	if (argc >= 2)
 	{
 		text = fopen(argv[1], "rb");
 		if (text == NULL)
@@ -127,10 +127,22 @@ int main(int argc, char** argv)
 		{
 			filename_dir[0] = '\0';
 		}
-		bin = fopen(argv[2], "wb");
+		if (argc >= 3)
+		{
+			strncpy(new_filename, argv[2], 256);
+		}
+		else
+		{
+			strncpy(new_filename, argv[1], 256);
+			int new_name_len = strlen(new_filename);
+			new_filename[new_name_len - 3] = 'b';
+			new_filename[new_name_len - 2] = 'i';
+			new_filename[new_name_len - 1] = 'n';
+		}
+		bin = fopen(new_filename, "wb");
 		if (bin == NULL)
 		{
-			printf("Failed to create file %s.\n", argv[2]);
+			printf("Failed to create file %s.\n", new_filename);
 			getchar();
 			return 0;
 		}
@@ -151,7 +163,7 @@ int main(int argc, char** argv)
 		if (write_c_header == true)
 		{
 			header_slash_loc = GetLastSlashPos(argv[3]);
-			if(header_slash_loc != 0)
+			if (header_slash_loc != 0)
 			{
 				header_slash_loc++;
 			}
@@ -251,8 +263,11 @@ int main(int argc, char** argv)
 			}
 			file_offset += comp_size;
 		}
-		fprintf(c_header, "\n");
-		fprintf(c_header, "#endif\n");
+		if (write_c_header)
+		{
+			fprintf(c_header, "\n");
+			fprintf(c_header, "#endif\n");
+		}
 		fclose(bin);
 		fclose(text);
 		if (write_c_header)
@@ -265,6 +280,7 @@ int main(int argc, char** argv)
 		printf("Usage is binpack list.txt out.bin c_header.h\n");
 		printf("list.txt is the text file created by bindump.\n");
 		printf("out.bin is the output BIN file for Mario Party.\n");
+		printf("If out.bin isn't provided then the output file will be the same name as the text file but with a .bin extension.\n");
 		printf("Last parameter is for developers only.\n");
 		getchar();
 		return 0;
