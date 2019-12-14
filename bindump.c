@@ -58,7 +58,8 @@ int main(int argc, char** argv)
 
 	unsigned char *decompress_buffer;
 	int i;
-
+	int last_slash_pos;
+	
 	if (argc >= 2)
 	{
 		bin_file = fopen(argv[1], "rb");
@@ -141,7 +142,16 @@ int main(int argc, char** argv)
 				return 0;
 			}
 			WriteFileArray(subfile_out, decompress_buffer, 0, decompressed_size);
-			fprintf(text_out, "compress_type=%d: %s\n", compress_type, new_name_buffer+GetLastSlashPos(new_name_buffer)+1);
+			last_slash_pos = GetLastSlashPos(new_name_buffer);
+			if(last_slash_pos)
+			{
+				fprintf(text_out, "compress_type=%d: %s\n", compress_type, new_name_buffer+last_slash_pos+1);
+			}
+			else
+			{
+				fprintf(text_out, "compress_type=%d: %s\n", compress_type, new_name_buffer);
+			}
+			
 			fclose(subfile_out);
 			free(decompress_buffer);
 		}
